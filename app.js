@@ -31,15 +31,41 @@ var pdf2png = function(pdfPath, cb) {
     });
 };
 
+var ppt2png = function(pptPath, cb) {
+    console.log('unoconv started');
+    unoconv.convert(pptPath, 'pdf', {}, function(err, data) {
+        console.log('unoconv finished', arguments);
+        if(err) {
+        }
+        else {
+        }
+    });
+}
+
 app.post('/', function(req, res) {
     var file = req.files.file;
-    pdf2png(file.path, function(data) {
-        res.writeHead(200, { 'Content-Type': 'application/json' });
-        console.log('data', data);
-        setTimeout(function() {
-            res.end(JSON.stringify(data));
-        }, 3000);
-    });
+    console.log(file);
+    switch(file.mimetype) {
+        case 'application/pdf':
+            pdf2png(file.path, function(data) {
+                res.writeHead(200, { 'Content-Type': 'application/json' });
+                console.log('data', data);
+                setTimeout(function() {
+                    res.end(JSON.stringify(data));
+                }, 3000);
+            });
+            break;
+
+        case 'application/vnd.ms-powerpoint':
+            ppt2png(file.path, function(data) {
+                res.writeHead(200, { 'Content-Type': 'application/json' });
+                console.log('data', data);
+                setTimeout(function() {
+                    res.end(JSON.stringify(data));
+                }, 3000);
+            });
+            break;
+    }
     // unoconv.convert(file.path, 'pdf', {}, function(err, result) {
     //     console.log(arguments);
     //     if(err) {
